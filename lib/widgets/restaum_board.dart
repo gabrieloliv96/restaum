@@ -23,7 +23,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   final List<Color> _cells = change1PositionFilledList(31);
   final List<int> selectedIndex = [-1];
   final List<int> spotedIndex = [-1];
-  List noBuild = [
+  final List _noBuild = [
     0,
     1,
     2,
@@ -359,15 +359,11 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
 
   void _resetTheBoard() {
     for (int index = 0; index < _cells.length; index++) {
-      _cells[index] = graycolor;
+      if (!_noBuild.contains(index)) {
+        _cells[index] = blueColor;
+        _cells[31] = graycolor;
+      }
     }
-    // playersPieces = [];
-    // playersPieces = List.generate(
-    //   8,
-    //   (_) => GekitaiPiece(
-    //     color: playerColor,
-    //   ),
-    // );
     setState(() {});
   }
 
@@ -376,51 +372,22 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
       _showVictory();
     }
 
-    // Check rows
-    for (int row = 0; row < 6; row++) {
-      int start = row * 6;
-      for (int col = 0; col < 4; col++) {
-        int pos = start + col;
-        if (_cells[pos] == playerColor &&
-            _cells[pos] == _cells[pos + 1] &&
-            _cells[pos] == _cells[pos + 2]) {
-          _showVictory();
+    for (int i = 0; i < 63; i++) {
+      if (!_noBuild.contains(i)) {
+        if (i + 1 <= 63) {
+          if (_cells[i + 1] == blueColor) return false;
+        }
+        if (i - 1 > 0) {
+          if (_cells[i - 1] == blueColor) return false;
+        }
+        if (i + 10 <= 63) {
+          if (_cells[i + 10] == blueColor) return false;
+        }
+        if (i - 10 > 0) {
+          if (_cells[i - 10] == blueColor) return false;
         }
       }
-    }
-
-    // Check columns
-    for (int col = 0; col < 6; col++) {
-      for (int row = 0; row < 4; row++) {
-        int pos = row * 6 + col;
-        if (_cells[pos] == playerColor &&
-            _cells[pos] == _cells[pos + 6] &&
-            _cells[pos] == _cells[pos + 12]) {
-          _showVictory();
-        }
-      }
-    }
-
-    // Check diagonals
-    for (int row = 0; row < 4; row++) {
-      for (int col = 0; col < 4; col++) {
-        int pos = row * 6 + col;
-        if (_cells[pos] == playerColor &&
-            _cells[pos] == _cells[pos + 7] &&
-            _cells[pos] == _cells[pos + 14]) {
-          _showVictory();
-        }
-      }
-    }
-    for (int row = 0; row < 4; row++) {
-      for (int col = 2; col < 6; col++) {
-        int pos = row * 6 + col;
-        if (_cells[pos] == playerColor &&
-            _cells[pos] == _cells[pos + 5] &&
-            _cells[pos] == _cells[pos + 10]) {
-          _showVictory();
-        }
-      }
+      _showVictory();
     }
   }
 
@@ -434,7 +401,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
           child: GridView.count(
             crossAxisCount: 9,
             children: List.generate(_cells.length, (index) {
-              if (noBuild.contains(index)) {
+              if (_noBuild.contains(index)) {
                 return Container(
                   color: Colors.grey,
                 );
