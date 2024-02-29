@@ -92,7 +92,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
           _handleMove(tapedIndex: tapedIndex, fromIndex: fromIndex);
         });
         _client.turnEnd(playerTurn: 1);
-        _handleTurn();
+        _turnEnd();
         _checkWinner();
       }
     }
@@ -102,7 +102,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     _client.socket.on(
       SocketEvents.boardMoviment.event,
       (data) {
-        if (_isNotFirstMoviment()) _handleTurn();
+        if (_isNotFirstMoviment()) _turnEnd();
         List<dynamic> move =
             data.toString().replaceAll('{', '').replaceAll('}', '').split(':');
         setState(
@@ -116,7 +116,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     _client.socket.on(
       SocketEvents.turnEnd.event,
       (data) {
-        _handleTurn();
+        _turnStart();
       },
     );
 
@@ -298,9 +298,15 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     return true;
   }
 
-  void _handleTurn() {
+  void _turnEnd() {
     setState(() {
-      canPlay = !canPlay;
+      canPlay = false;
+    });
+  }
+
+  void _turnStart() {
+    setState(() {
+      canPlay = true;
     });
   }
 
@@ -435,32 +441,59 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
               } else {
                 return GestureDetector(
                   onTap: () {
-                    if (selectedIndex[0] == -1) {
-                      if (canPlay) {
-                        setState(() {
-                          selectedIndex[0] = index;
-                          _cells[index] = playerColor!;
-                        });
-                        _handlePlayerClick(
-                          tapedIndex: index,
-                        );
+                    if (playerColor != null) {
+                      if (selectedIndex[0] != index) {
+                        if (selectedIndex[0] == -1) {
+                          if (canPlay) {
+                            setState(() {
+                              selectedIndex[0] = index;
+                              _cells[index] = playerColor!;
+                            });
+                            _handlePlayerClick(
+                              tapedIndex: index,
+                            );
+                          } else {
+                            final SnackBar snackbar = SnackBar(
+                              content: Text(
+                                Messages.waitYourTurn,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              backgroundColor: Colors.yellow,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackbar);
+                          }
+                        } else {
+                          _handlePlayerClick(
+                              tapedIndex: index, fromIndex: selectedIndex[0]);
+                          selectedIndex[0] = -1;
+                        }
                       } else {
-                        final SnackBar snackbar = SnackBar(
-                          content: Text(
-                            Messages.waitYourTurn,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          backgroundColor: Colors.yellow,
+                        setState(() {
+                          selectedIndex[0] = -1;
+                          _cells[index] = Colors.blue;
+                        });
+                        _client.sendBoardMove(
+                          playerColor: Colors.blue,
+                          boardIndex: index,
                         );
-                        ScaffoldMessenger.of(context).showSnackBar(snackbar);
                       }
                     } else {
-                      _handlePlayerClick(
-                          tapedIndex: index, fromIndex: selectedIndex[0]);
-                      selectedIndex[0] = -1;
+                      final SnackBar snackbar = SnackBar(
+                        content: Text(
+                          Messages.chooseColor,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        backgroundColor:
+                            const Color.fromARGB(255, 169, 167, 150),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
                     }
                   },
                   child: Center(
@@ -491,11 +524,27 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
             textColor: Colors.red,
             label: 'Escolha uma cor',
           ),
-        // Row(
-        //   children: [
-        //     ...playersPieces.map((e) => e).toList(),
-        //   ],
-        // ),
+        Row(
+          children: [
+            Container(
+              height: 50,
+              width: 150,
+              // color: playerColor,
+              decoration: BoxDecoration(
+                  color: playerColor, borderRadius: BorderRadius.circular(10)),
+              child: const Center(
+                child: Text(
+                  'Jogador',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [Container()],
+        ),
         const SizedBox(
           height: 20,
         ),
