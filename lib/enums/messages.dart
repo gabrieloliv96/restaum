@@ -6,4 +6,5 @@ class Messages {
   static String givUpRequest = 'Solicitação enviada, aguarde!';
   static String winTheGame = 'Parabéns, você ganhou :)!';
   static String loseByGivingUp = "Perdeu o jogo! :'( ";
+  static String chooseColor = "Por favor, escolha sua cor.";
 }
