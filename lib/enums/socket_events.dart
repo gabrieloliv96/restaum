@@ -10,4 +10,5 @@ class SocketEvents {
   static final SocketEvents giveUp = SocketEvents._('give-up');
   static final SocketEvents aceptGiveUp = SocketEvents._('acept-give-up');
   static final SocketEvents turnEnd = SocketEvents._('turn-end');
+  static final SocketEvents firstPlayer = SocketEvents._('first-player');
 }

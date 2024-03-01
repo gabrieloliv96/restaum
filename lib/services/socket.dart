@@ -43,6 +43,14 @@ class SocketClient {
     );
   }
 
+  firstPlayer({required int playerTurn}) {
+    Map turn = {'turn': playerTurn};
+    socket.emit(
+      SocketEvents.firstPlayer.event,
+      turn.toString(),
+    );
+  }
+
   playerPieceMovedOut({
     required int piecePosition,
     required int colorValue,

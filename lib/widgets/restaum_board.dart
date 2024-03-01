@@ -18,6 +18,7 @@ class RestaUmBoard extends StatefulWidget {
 
 class _RestaUmBoardState extends State<RestaUmBoard> {
   bool canPlay = true;
+  bool? hasFirst;
   Color? playerColor;
   final Color _currentColor = graycolor;
   final List<Color> _cells = change1PositionFilledList(31);
@@ -98,6 +99,10 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     }
   }
 
+  void _handleFirstPlayer() {
+    _client.firstPlayer(playerTurn: 1);
+  }
+
   void _handleComingMessage() {
     _client.socket.on(
       SocketEvents.boardMoviment.event,
@@ -117,6 +122,13 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
       SocketEvents.turnEnd.event,
       (data) {
         _turnStart();
+      },
+    );
+
+    _client.socket.on(
+      SocketEvents.firstPlayer.event,
+      (data) {
+        _hasFirst();
       },
     );
 
@@ -179,14 +191,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
       if (selectedColor != null) {
         playerColor = selectedColor;
         setState(
-          () {
-            // playersPieces = List.generate(
-            //   8,
-            //   (_) => GekitaiPiece(
-            //     color: selectedColor,
-            //   ),
-            // );
-          },
+          () {},
         );
       }
     });
@@ -298,6 +303,13 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     return true;
   }
 
+  void _hasFirst() {
+    setState(() {
+      canPlay = false;
+      hasFirst = true;
+    });
+  }
+
   void _turnEnd() {
     setState(() {
       canPlay = false;
@@ -373,7 +385,9 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     }
 
     for (int i = 0; i < 63; i++) {
-      if (!_noBuild.contains(i)) {
+      if (_noBuild.contains(i)) {
+        return false;
+      } else {
         if (i + 1 <= 63) {
           if (_cells[i + 1] == blueColor) return false;
         }
@@ -482,6 +496,17 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
             }),
           ),
         ),
+        if (playerColor != null)
+          if (hasFirst == null)
+            ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    hasFirst = true;
+                    _handleFirstPlayer();
+                  });
+                },
+                child: const Text('Clique para ser o primeiro a jogar')),
+        if (hasFirst == true && canPlay == true) const Text('Sua vez'),
         const SizedBox(
           height: 10,
         ),
