@@ -14,10 +14,14 @@ Projeto de Sockets
     Os jogadores se revezam, jogando um de cada vez.
     O jogo termina quando restar somente uma peça ou não for possível fazer movimentos
    
-2) Funcionalidades Básicas
+2) Funcionalidades Básicas:
   · Controle de turno, com definição de quem inicia a partida
+
   · Movimentação das peças nos tabuleiros
+
   · Desistência
+  
   · Chat para comunicação durante toda a partida
+  
   · Indicação de vencedor
 
