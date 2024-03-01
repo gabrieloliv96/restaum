@@ -1,16 +1,23 @@
 # sktrestaum
+Necessário para executar o código:
+1. Flutter 3.x.x ++
+2. Dart 3.x ++
+3. Servidor npm que esta no link https://github.com/gabrieloliv96/restaumsrv
 
-A new Flutter project.
+Projeto de Sockets
+1) Objetivo: Implementar o jogo Resta Um para dois jogadores
+  Objetivo do jogo
+    O jogo inicia com as 32 peças no tabuleiro, deixando o espaço do centro vazio. O jogador escolhe
+    uma peça para começar, a peça escolhida deve saltar sobre outra peça, fazendo movimentos na
+    horizontal ou na vertical, e deve chegar a um espaço vazio. A peça que foi pulada sai do jogo. Só é
+    possível retirar uma peça por vez.
+    Os jogadores se revezam, jogando um de cada vez.
+    O jogo termina quando restar somente uma peça ou não for possível fazer movimentos
+   
+2) Funcionalidades Básicas
+  · Controle de turno, com definição de quem inicia a partida
+  · Movimentação das peças nos tabuleiros
+  · Desistência
+  · Chat para comunicação durante toda a partida
+  · Indicação de vencedor
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
