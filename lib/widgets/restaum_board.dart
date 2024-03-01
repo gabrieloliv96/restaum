@@ -8,6 +8,32 @@ import 'action_button.dart';
 
 const Color graycolor = Colors.grey;
 const Color blueColor = Colors.blue;
+const List _noBuild = [
+  0,
+  1,
+  2,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  15,
+  16,
+  17,
+  45,
+  46,
+  47,
+  51,
+  52,
+  53,
+  54,
+  55,
+  56,
+  60,
+  61,
+  62
+];
 
 class RestaUmBoard extends StatefulWidget {
   const RestaUmBoard({super.key});
@@ -21,41 +47,23 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   bool? hasFirst;
   Color? playerColor;
   final Color _currentColor = graycolor;
-  final List<Color> _cells = change1PositionFilledList(31);
+  final List<Color> _cells = change1PositionFilledList(
+    31,
+  );
   final List<int> selectedIndex = [-1];
   final List<int> spotedIndex = [-1];
-  final List _noBuild = [
-    0,
-    1,
-    2,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    15,
-    16,
-    17,
-    45,
-    46,
-    47,
-    51,
-    52,
-    53,
-    54,
-    55,
-    56,
-    60,
-    61,
-    62
-  ];
+
 // _cells[31] = greenColor;
   final SocketClient _client = SocketClient();
   // List<GekitaiPiece> playersPieces = [];
 
-  static List<Color> change1PositionFilledList(int pos) {
+  static List<Color> change1PositionFilledList(
+    int pos,
+  ) {
     List<Color> colors = List<Color>.filled(63, blueColor);
+    for (int element in _noBuild) {
+      colors[element] = graycolor;
+    }
     colors[pos] = graycolor;
     return colors;
   }
@@ -329,14 +337,14 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   }
 
   _handleMove({required int tapedIndex, required int fromIndex}) {
-    _cells[tapedIndex] = Colors.blue;
-    _cells[fromIndex] = Colors.grey;
+    _cells[tapedIndex] = blueColor;
+    _cells[fromIndex] = graycolor;
     _client.sendBoardMove(
-      playerColor: Colors.grey,
+      playerColor: graycolor,
       boardIndex: fromIndex,
     );
     _client.sendBoardMove(
-      playerColor: Colors.blue,
+      playerColor: blueColor,
       boardIndex: tapedIndex,
     );
 
@@ -344,16 +352,16 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     if (val > 1) {
       int position =
           (val ~/ 2 + (tapedIndex > fromIndex ? fromIndex : tapedIndex));
-      _cells[position] = Colors.grey;
+      _cells[position] = graycolor;
       _client.sendBoardMove(
-        playerColor: Colors.grey,
+        playerColor: graycolor,
         boardIndex: position,
       );
     } else {
       int position = (tapedIndex > fromIndex ? fromIndex : tapedIndex + 1);
-      _cells[position] = Colors.grey;
+      _cells[position] = graycolor;
       _client.sendBoardMove(
-        playerColor: Colors.grey,
+        playerColor: graycolor,
         boardIndex: position,
       );
     }
@@ -389,23 +397,26 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     // TODO Deu erro aqui tmb Não sei pq
     for (int i = 0; i < 63; i++) {
       if (_noBuild.contains(i)) {
-        return false;
+        continue;
       } else {
-        if (i + 1 <= 63) {
-          if (_cells[i + 1] == blueColor) return false;
+        if (_cells[i] == blueColor) {
+          if (i + 1 <= 63) {
+            if (_cells[i + 1] == blueColor) return false;
+          }
+          if (i - 1 > 0) {
+            if (_cells[i - 1] == blueColor) return false;
+          }
+          if (i + 10 <= 63) {
+            if (_cells[i + 10] == blueColor) return false;
+          }
+          if (i - 10 > 0) {
+            if (_cells[i - 10] == blueColor) return false;
+          }
         }
-        if (i - 1 > 0) {
-          if (_cells[i - 1] == blueColor) return false;
-        }
-        if (i + 10 <= 63) {
-          if (_cells[i + 10] == blueColor) return false;
-        }
-        if (i - 10 > 0) {
-          if (_cells[i - 10] == blueColor) return false;
-        }
+        continue;
       }
-      _showVictory();
     }
+    _showVictory();
   }
 
   @override
@@ -420,7 +431,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
             children: List.generate(_cells.length, (index) {
               if (_noBuild.contains(index)) {
                 return Container(
-                  color: Colors.grey,
+                  color: graycolor,
                 );
               } else {
                 return GestureDetector(
@@ -458,10 +469,10 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
                       } else {
                         setState(() {
                           selectedIndex[0] = -1;
-                          _cells[index] = Colors.blue;
+                          _cells[index] = blueColor;
                         });
                         _client.sendBoardMove(
-                          playerColor: Colors.blue,
+                          playerColor: blueColor,
                           boardIndex: index,
                         );
                       }
