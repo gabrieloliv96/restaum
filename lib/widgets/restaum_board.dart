@@ -278,6 +278,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   }
 
   bool _isValidMoviment({required int tapedIndex}) {
+    // TODO implementação de onde pode mover a peça, x + 2 || x - 2 || x + 20 || x - 20 e só não pode menos nem mais que isso.
     if (playerColor == null) {
       final SnackBar snackbar = SnackBar(
         content: Text(Messages.selectAColor),
@@ -380,10 +381,12 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   }
 
   _checkWinner() {
+    // TODO isso não ta funcionando.
     if (_cells.where((cell) => cell.value == blueColor.value).length == 1) {
       _showVictory();
     }
 
+    // TODO Deu erro aqui tmb Não sei pq
     for (int i = 0; i < 63; i++) {
       if (_noBuild.contains(i)) {
         return false;
