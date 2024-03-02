@@ -84,25 +84,25 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   }
 
   void _handlePlayerClick({required int tapedIndex, int? fromIndex}) {
-    if (_isValidMoviment(tapedIndex: tapedIndex)) {
+    if (_isValidMoviment(tapedIndex: tapedIndex, fromIndex: fromIndex)) {
       setState(
         () {
           _cells[tapedIndex] = playerColor!;
         },
       );
-      // playersPieces.removeLast();
       _client.sendBoardMove(
         playerColor: playerColor!,
         boardIndex: tapedIndex,
       );
-      // _pushPieces(tapedIndex: tapedIndex);
       if (fromIndex != null) {
         setState(() {
           _handleMove(tapedIndex: tapedIndex, fromIndex: fromIndex);
         });
-        _client.turnEnd(playerTurn: 1);
-        _turnEnd();
+        // TODO ligar o fim do turno de novo
+        // _client.turnEnd(playerTurn: 1);
+        // _turnEnd();
         _checkWinner();
+        selectedIndex[0] = -1;
       }
     }
   }
@@ -285,7 +285,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     );
   }
 
-  bool _isValidMoviment({required int tapedIndex}) {
+  bool _isValidMoviment({required int tapedIndex, int? fromIndex}) {
     // TODO implementação de onde pode mover a peça, x + 2 || x - 2 || x + 20 || x - 20 e só não pode menos nem mais que isso.
     if (playerColor == null) {
       final SnackBar snackbar = SnackBar(
@@ -309,6 +309,33 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
       return false;
     }
+    if (fromIndex != null) {
+      if (fromIndex == tapedIndex) {
+        setState(() {
+          _cells[fromIndex] = blueColor;
+        });
+        return false;
+      } else if (tapedIndex + 2 == fromIndex ||
+          tapedIndex - 2 == fromIndex ||
+          tapedIndex + 18 == fromIndex ||
+          tapedIndex - 18 == fromIndex) {
+        return true;
+      } else {
+        final SnackBar snackbar = SnackBar(
+          content: Text(
+            Messages.unavaliableMove,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: Colors.yellow,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -389,7 +416,6 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   }
 
   _checkWinner() {
-    // TODO isso não ta funcionando.
     if (_cells.where((cell) => cell.value == blueColor.value).length == 1) {
       _showVictory();
     }
@@ -464,7 +490,6 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
                         } else {
                           _handlePlayerClick(
                               tapedIndex: index, fromIndex: selectedIndex[0]);
-                          selectedIndex[0] = -1;
                         }
                       } else {
                         setState(() {
