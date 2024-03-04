@@ -53,9 +53,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   final List<int> selectedIndex = [-1];
   final List<int> spotedIndex = [-1];
 
-// _cells[31] = greenColor;
   final SocketClient _client = SocketClient();
-  // List<GekitaiPiece> playersPieces = [];
 
   static List<Color> change1PositionFilledList(
     int pos,
@@ -99,8 +97,8 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
           _handleMove(tapedIndex: tapedIndex, fromIndex: fromIndex);
         });
         // TODO ligar o fim do turno de novo
-        // _client.turnEnd(playerTurn: 1);
-        // _turnEnd();
+        _client.turnEnd(playerTurn: 1);
+        _turnEnd();
         _checkWinner();
         selectedIndex[0] = -1;
       }
@@ -286,7 +284,6 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   }
 
   bool _isValidMoviment({required int tapedIndex, int? fromIndex}) {
-    // TODO implementação de onde pode mover a peça, x + 2 || x - 2 || x + 20 || x - 20 e só não pode menos nem mais que isso.
     if (playerColor == null) {
       final SnackBar snackbar = SnackBar(
         content: Text(Messages.selectAColor),
@@ -420,25 +417,35 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
       _showVictory();
     }
 
-    // TODO Deu erro aqui tmb Não sei pq
+    // TODO
     for (int i = 0; i < 63; i++) {
       if (_noBuild.contains(i)) {
         continue;
       } else {
         if (_cells[i] == blueColor) {
+          //  Falta só a logica de ter 3 no canto
           if (i + 1 <= 63) {
-            if (_cells[i + 1] == blueColor) return false;
+            print(
+                'Cell ${i + 1}: ${_cells[i + 1].value}, azul: ${blueColor.value}');
+            if (_cells[i + 1].value == blueColor.value) return false;
           }
           if (i - 1 > 0) {
-            if (_cells[i - 1] == blueColor) return false;
+            print(
+                'Cell ${i - 1}: ${_cells[i - 1].value}, azul: ${blueColor.value}');
+            if (_cells[i - 1].value == blueColor.value) return false;
           }
           if (i + 10 <= 63) {
-            if (_cells[i + 10] == blueColor) return false;
+            print(
+                'Cell ${i + 9}: ${_cells[i + 9].value}, azul: ${blueColor.value}');
+            if (_cells[i + 9].value == blueColor.value) return false;
           }
           if (i - 10 > 0) {
-            if (_cells[i - 10] == blueColor) return false;
+            print(
+                'Cell ${i - 9}: ${_cells[i - 9].value}, azul: ${blueColor.value}');
+            if (_cells[i - 9].value == blueColor.value) return false;
           }
         }
+        // TODO Retorno que vc perdeu
         continue;
       }
     }
