@@ -27,6 +27,7 @@ Projeto de Sockets
     · Indicação de vencedor
 
 ** Existe um executavel dentro do Projeto **
+
   Um arquivo zip dentro da pasta raiz quando clonado.
   -- Resta um.zip
   Basta extraí-lo e executar o arquivo "sktrestaum.exe"
