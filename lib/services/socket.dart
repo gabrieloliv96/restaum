@@ -50,20 +50,4 @@ class SocketClient {
       turn.toString(),
     );
   }
-
-  playerPieceMovedOut({
-    required int piecePosition,
-    required int colorValue,
-  }) {
-    final socketData = {piecePosition, colorValue};
-    socket.emit(SocketEvents.pieceOutBoard.event, socketData.toString());
-  }
-
-  pieceWasPushed({
-    required int from,
-    required int to,
-  }) {
-    final List<int> moviment = [from, to];
-    socket.emit(SocketEvents.pieceWasPushed.event, moviment.toString());
-  }
 }
