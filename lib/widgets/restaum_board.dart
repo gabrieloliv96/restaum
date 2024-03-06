@@ -62,7 +62,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     for (int element in _noBuild) {
       colors[element] = graycolor;
     }
-    colors[pos] = graycolor;
+    colors[31] = graycolor;
     return colors;
   }
 
@@ -81,7 +81,7 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
     _handleComingMessage();
   }
 
-  void _handlePlayerClick({required int tapedIndex, int? fromIndex}) {
+  bool _handlePlayerClick({required int tapedIndex, int? fromIndex}) {
     if (_isValidMoviment(tapedIndex: tapedIndex, fromIndex: fromIndex)) {
       setState(
         () {
@@ -102,6 +102,9 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
         _checkWinner();
         selectedIndex[0] = -1;
       }
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -284,6 +287,12 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
   }
 
   bool _isValidMoviment({required int tapedIndex, int? fromIndex}) {
+    if (_cells[tapedIndex] == graycolor && fromIndex == null) {
+      setState(() {
+        _cells[tapedIndex] = graycolor;
+      });
+      return false;
+    }
     if (playerColor == null) {
       final SnackBar snackbar = SnackBar(
         content: Text(Messages.selectAColor),
@@ -312,10 +321,11 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
           _cells[fromIndex] = blueColor;
         });
         return false;
-      } else if (tapedIndex + 2 == fromIndex ||
-          tapedIndex - 2 == fromIndex ||
-          tapedIndex + 18 == fromIndex ||
-          tapedIndex - 18 == fromIndex) {
+      } else if (_cells[tapedIndex] != blueColor &&
+          (tapedIndex + 2 == fromIndex ||
+              tapedIndex - 2 == fromIndex ||
+              tapedIndex + 18 == fromIndex ||
+              tapedIndex - 18 == fromIndex)) {
         return true;
       } else {
         final SnackBar snackbar = SnackBar(
@@ -473,13 +483,27 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
                       if (selectedIndex[0] != index) {
                         if (selectedIndex[0] == -1) {
                           if (canPlay) {
-                            setState(() {
-                              selectedIndex[0] = index;
-                              _cells[index] = playerColor!;
-                            });
-                            _handlePlayerClick(
+                            if (_handlePlayerClick(
                               tapedIndex: index,
-                            );
+                            )) {
+                              setState(() {
+                                selectedIndex[0] = index;
+                                _cells[index] = playerColor!;
+                              });
+                            } else {
+                              final SnackBar snackbar = SnackBar(
+                                content: Text(
+                                  Messages.unavaliableMove,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                backgroundColor: Colors.yellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackbar);
+                            }
                           } else {
                             final SnackBar snackbar = SnackBar(
                               content: Text(
@@ -530,10 +554,11 @@ class _RestaUmBoardState extends State<RestaUmBoard> {
                       child: Padding(
                         padding: const EdgeInsets.all(8), // Border radius
                         child: ClipOval(
-                            child: Text(
-                          index.toString(),
-                          style: const TextStyle(color: Colors.white),
-                        )),
+                          child: Text(
+                            index.toString(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
                     ),
                   ),
