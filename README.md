@@ -32,3 +32,9 @@ Projeto de Sockets
   
   -- Resta um.zip
   Basta extraí-lo e executar o arquivo "sktrestaum.exe"
+  
+
+** Para executar o projeto em flutter ** 
+1) Flutter pub get
+2) Flutter run
+  
